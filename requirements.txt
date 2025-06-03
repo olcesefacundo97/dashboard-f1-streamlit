@@ -1,0 +1,8 @@
+streamlit
+pandas
+plotly
+pydeck
+requests
+scipy
+scikit-learn
+xlsxwriter
