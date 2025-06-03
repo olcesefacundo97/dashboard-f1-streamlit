@@ -17,6 +17,7 @@ Visualizá, analizá y predecí resultados de la Fórmula 1 en un dashboard inte
 1. Cloná este repositorio:
 
 git clone https://github.com/olcesefacundo97/dashboard-f1-streamlit.git
+
 cd dashboard-f1-streamlit
 
 2. Instalá dependencias:
