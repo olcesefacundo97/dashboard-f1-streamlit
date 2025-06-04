@@ -1,0 +1,18 @@
+[theme]
+primaryColor="#EA2C2C"
+backgroundColor="#F3F6FA"
+secondaryBackgroundColor="#FFFFFF"
+textColor="#1B1E23"
+font="sans serif"
+
+[server]
+headless = true
+
+[client]
+showSidebarNavigation = true
+
+[ui]
+hideTopBar = false
+
+[general]
+pageTitle = "Dashboard Interactivo F1"
