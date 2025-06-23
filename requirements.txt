@@ -3,7 +3,7 @@ pandas
 plotly
 pydeck
 requests
-scipy==1.12.0
+scipy==1.10.1
 scikit-learn
 xlsxwriter
-statsmodels==0.14.0
+statsmodels==0.13.5
