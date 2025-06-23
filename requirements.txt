@@ -3,7 +3,8 @@ pandas
 plotly
 pydeck
 requests
-scipy==1.10.1
 scikit-learn
 xlsxwriter
+# 👇 INDISPENSABLE: estas versiones sí o sí
+scipy==1.10.1
 statsmodels==0.13.5
