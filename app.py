@@ -340,7 +340,7 @@ with tabs[5]:
     st.subheader("Correlación entre posición de clasificación y posición final")
     corr = df_filtrado[['PosicionClasificacion', 'Posición']].corr().iloc[0,1]
     st.write(f"Coeficiente de correlación: **{corr:.2f}**")
-    fig_corr = px.scatter(df_filtrado, x='PosicionClasificacion', y='Posición', trendline='ols')
+    fig_corr = px.scatter(df_filtrado, x='PosicionClasificacion', y='Posición')  # SACÁ trendline='ols'
     st.plotly_chart(fig_corr)
 
     st.subheader("Boxplot de posición final por clima y piloto")
