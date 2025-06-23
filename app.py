@@ -410,42 +410,64 @@ with tabs[6]:
         st.plotly_chart(fig)
 
 # ========== TAB: FEEDBACK ==========
+
 with tabs[7]:
+    # Definí las rutas al inicio del tab
+    ruta_pilotos = "feedback_pilotos.csv"
+    ruta_escuderias = "feedback_escuderias.csv"
+
     st.title("🗣️ Feedback")
     st.markdown("¿Qué tipo de visualización te resulta más útil para comparar pilotos?")
     preferencia_piloto = st.radio(
         "Visualización favorita para pilotos:",
-        ["Gráfico", "Tabla", "Ambos", "Ninguno"], key='feedback_piloto'
+        ["Gráfico", "Tabla", "Ambos", "Ninguno"],
+        key='feedback_piloto',
+        index=None
     )
-    respuesta_pilotos = pd.DataFrame([{
-        "Temporada": temporada,
-        "Fecha": pd.Timestamp.now(),
-        "Preferencia": preferencia_piloto
-    }])
-    ruta_pilotos = "feedback_pilotos.csv"
-    respuesta_pilotos.to_csv(ruta_pilotos, mode='a', index=False, header=not os.path.exists(ruta_pilotos))
-    st.success(f"Gracias por tu respuesta sobre pilotos: **{preferencia_piloto}**")
+
+    if st.button("Enviar feedback de pilotos"):
+        if preferencia_piloto is not None:
+            respuesta_pilotos = pd.DataFrame([{
+                "Temporada": temporada,
+                "Fecha": pd.Timestamp.now(),
+                "Preferencia": preferencia_piloto
+            }])
+            respuesta_pilotos.to_csv(ruta_pilotos, mode='a', index=False, header=not os.path.exists(ruta_pilotos))
+            st.success(f"Gracias por tu respuesta sobre pilotos: **{preferencia_piloto}**")
+        else:
+            st.warning("Por favor, seleccioná una opción antes de enviar el feedback.")
 
     st.markdown("---")
     st.markdown("¿Qué tipo de visualización te resulta más útil para comparar escuderías?")
     preferencia_escu = st.radio(
         "Visualización favorita para escuderías:",
-        ["Gráfico", "Tabla", "Ambos", "Ninguno"], key='feedback_escu'
+        ["Gráfico", "Tabla", "Ambos", "Ninguno"],
+        key='feedback_escu',
+        index=None
     )
-    respuesta_escuderias = pd.DataFrame([{
-        "Temporada": temporada,
-        "Fecha": pd.Timestamp.now(),
-        "Preferencia": preferencia_escu
-    }])
-    ruta_escuderias = "feedback_escuderias.csv"
-    respuesta_escuderias.to_csv(ruta_escuderias, mode='a', index=False, header=not os.path.exists(ruta_escuderias))
-    st.success(f"Gracias por tu respuesta sobre escuderías: **{preferencia_escu}**")
+
+    if st.button("Enviar feedback de escuderías"):
+        if preferencia_escu is not None:
+            respuesta_escuderias = pd.DataFrame([{
+                "Temporada": temporada,
+                "Fecha": pd.Timestamp.now(),
+                "Preferencia": preferencia_escu
+            }])
+            respuesta_escuderias.to_csv(ruta_escuderias, mode='a', index=False, header=not os.path.exists(ruta_escuderias))
+            st.success(f"Gracias por tu respuesta sobre escuderías: **{preferencia_escu}**")
+        else:
+            st.warning("Por favor, seleccioná una opción antes de enviar el feedback.")
 
     st.markdown("---")
     st.markdown("### Descargar resumen de feedback")
     resumen_paths = {'Pilotos': ruta_pilotos, 'Escuderías': ruta_escuderias}
     buffer_excel = exportar_excel(resumen_paths, "resumen_feedback.xlsx")
-    st.download_button("⬇️ Descargar resumen de feedback", buffer_excel, "resumen_feedback.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    st.download_button(
+        "⬇️ Descargar resumen de feedback",
+        buffer_excel,
+        "resumen_feedback.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
     if st.button("Borrar feedback guardado"):
         try:
