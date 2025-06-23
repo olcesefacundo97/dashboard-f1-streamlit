@@ -5,6 +5,4 @@ pydeck
 requests
 scikit-learn
 xlsxwriter
-# 👇 INDISPENSABLE: estas versiones sí o sí
-scipy==1.10.1
-statsmodels==0.13.5
+# Si no usás statsmodels ni trendline, no agregues scipy explícitamente; Plotly y scikit-learn ya la traen como dependencia.
