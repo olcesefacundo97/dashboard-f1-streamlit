@@ -35,3 +35,7 @@ streamlit run app.py
 ---
 
 Desarrollado por Emanuel Gallo y Facundo Olcese | Proyecto Integrador F1 | 2025
+
+## Licencia
+
+Este proyecto está disponible bajo los términos de la licencia MIT. Consultá el archivo [LICENSE](LICENSE) para más información.
