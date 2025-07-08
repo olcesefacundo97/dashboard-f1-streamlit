@@ -424,7 +424,13 @@ with tabs[3]:
         X = df_modelo[["PosicionClasificacion", "Clima", "Escudería"]]
         y = df_modelo["Posición"]
         pre = ColumnTransformer(
-            [("cat", OneHotEncoder(drop="first"), ["Clima", "Escudería"])],
+            [
+                (
+                    "cat",
+                    OneHotEncoder(drop="first", handle_unknown="ignore"),
+                    ["Clima", "Escudería"],
+                )
+            ],
             remainder="passthrough",
         )
         modelo = Pipeline(
