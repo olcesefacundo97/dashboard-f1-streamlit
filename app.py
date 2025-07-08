@@ -15,6 +15,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
+from packaging import version
+import sklearn
 
 st.set_page_config(
     layout="wide", page_title="Dashboard Interactivo - Fórmula 1", page_icon="🏎️"
@@ -425,11 +427,16 @@ with tabs[3]:
         X["Clima"] = X["Clima"].astype(str)
         X["Escudería"] = X["Escudería"].astype(str)
         y = df_modelo["Posición"]
+        ohe_params = {"drop": "first", "handle_unknown": "ignore"}
+        if version.parse(sklearn.__version__) >= version.parse("1.2"):
+            ohe_params["sparse_output"] = False
+        else:
+            ohe_params["sparse"] = False
         pre = ColumnTransformer(
             [
                 (
                     "cat",
-                    OneHotEncoder(drop="first", handle_unknown="ignore", sparse=False),
+                    OneHotEncoder(**ohe_params),
                     ["Clima", "Escudería"],
                 )
             ],
