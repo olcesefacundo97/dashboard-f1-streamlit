@@ -429,7 +429,7 @@ with tabs[3]:
             [
                 (
                     "cat",
-                    OneHotEncoder(drop="first", handle_unknown="ignore", sparse_output=False),
+                    OneHotEncoder(drop="first", handle_unknown="ignore", sparse=False),
                     ["Clima", "Escudería"],
                 )
             ],
