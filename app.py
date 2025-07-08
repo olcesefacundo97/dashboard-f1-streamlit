@@ -421,13 +421,15 @@ with tabs[3]:
         ["PosicionClasificacion", "Posición", "Clima", "Escudería"]
     ].dropna()
     if not df_modelo.empty:
-        X = df_modelo[["PosicionClasificacion", "Clima", "Escudería"]]
+        X = df_modelo[["PosicionClasificacion", "Clima", "Escudería"]].copy()
+        X["Clima"] = X["Clima"].astype(str)
+        X["Escudería"] = X["Escudería"].astype(str)
         y = df_modelo["Posición"]
         pre = ColumnTransformer(
             [
                 (
                     "cat",
-                    OneHotEncoder(drop="first", handle_unknown="ignore"),
+                    OneHotEncoder(drop="first", handle_unknown="ignore", sparse=False),
                     ["Clima", "Escudería"],
                 )
             ],
@@ -467,6 +469,8 @@ with tabs[3]:
                     }
                 ]
             )
+            df_input["Clima"] = df_input["Clima"].astype(str)
+            df_input["Escudería"] = df_input["Escudería"].astype(str)
             pred = modelo.predict(df_input)[0]
             pos_entera = int(round(pred))
             pos_entera = max(1, min(20, pos_entera))  # Asegura que esté entre 1 y 20
