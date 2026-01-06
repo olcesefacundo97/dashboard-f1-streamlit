@@ -124,16 +124,19 @@ def obtener_lat_lon_circuitos():
     url = "https://api.jolpi.ca/ergast/f1/circuits.json?limit=100"
     r = requests.get(url)
     datos = r.json()["MRData"]["CircuitTable"]["Circuits"]
-    return pd.DataFrame(
-        [
+    registros = []
+    for circuito in datos:
+        location = circuito.get("Location", {})
+        lat = pd.to_numeric(location.get("lat"), errors="coerce")
+        lon = pd.to_numeric(location.get("long"), errors="coerce")
+        registros.append(
             {
-                "Circuito": c["circuitName"],
-                "Lat": float(c["Location"]["lat"]),
-                "Lon": float(c["Location"]["long"]),
+                "Circuito": circuito.get("circuitName"),
+                "Lat": lat,
+                "Lon": lon,
             }
-            for c in datos
-        ]
-    )
+        )
+    return pd.DataFrame(registros).dropna(subset=["Lat", "Lon"])
 
 
 @st.cache_data(ttl=86400)
