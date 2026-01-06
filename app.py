@@ -789,13 +789,18 @@ with tabs[8]:
 
     # H3: Consistencia de escuderías (más y menos consistente)
     if "Posición" in df_filtrado.columns:
-        escu_consist = df_filtrado.groupby("Escudería")["Posición"].std().sort_values()
-        mejor = escu_consist.idxmin()
-        peor = escu_consist.idxmax()
-        conclusion_h3 = (
-            f"Escudería más consistente: **{mejor}** (STD posición: {escu_consist.min():.2f})\n\n"
-            f"Escudería menos consistente: **{peor}** (STD posición: {escu_consist.max():.2f})"
+        escu_consist = (
+            df_filtrado.groupby("Escudería")["Posición"].std().dropna().sort_values()
         )
+        if escu_consist.empty:
+            conclusion_h3 = "⚠️ No hay suficientes datos para evaluar la consistencia de escuderías."
+        else:
+            mejor = escu_consist.idxmin()
+            peor = escu_consist.idxmax()
+            conclusion_h3 = (
+                f"Escudería más consistente: **{mejor}** (STD posición: {escu_consist.min():.2f})\n\n"
+                f"Escudería menos consistente: **{peor}** (STD posición: {escu_consist.max():.2f})"
+            )
     else:
         conclusion_h3 = "⚠️ No hay datos de posiciones finales para evaluar H3."
     st.markdown(f"- **H3:** {conclusion_h3}")
