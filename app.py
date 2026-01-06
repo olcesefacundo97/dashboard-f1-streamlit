@@ -86,7 +86,19 @@ def cargar_datos_api(temporada):
         except Exception as e:
             st.error(f"Error al cargar resultados: {e}")
             break
-    return pd.DataFrame(registros)
+    columnas = [
+        "Temporada",
+        "Ronda",
+        "Fecha",
+        "Circuito",
+        "Pais",
+        "Piloto",
+        "Escudería",
+        "Posición",
+        "Puntos",
+        "Status",
+    ]
+    return pd.DataFrame(registros, columns=columnas)
 
 
 @st.cache_data(ttl=86400)
@@ -116,7 +128,8 @@ def cargar_posiciones_clasificacion(temporada):
                 )
         except Exception:
             continue
-    return pd.DataFrame(posiciones)
+    columnas = ["Temporada", "Ronda", "Piloto", "PosicionClasificacion"]
+    return pd.DataFrame(posiciones, columns=columnas)
 
 
 @st.cache_data(ttl=86400)
@@ -124,16 +137,19 @@ def obtener_lat_lon_circuitos():
     url = "https://api.jolpi.ca/ergast/f1/circuits.json?limit=100"
     r = requests.get(url)
     datos = r.json()["MRData"]["CircuitTable"]["Circuits"]
-    return pd.DataFrame(
-        [
+    registros = []
+    for circuito in datos:
+        location = circuito.get("Location", {})
+        lat = pd.to_numeric(location.get("lat"), errors="coerce")
+        lon = pd.to_numeric(location.get("long"), errors="coerce")
+        registros.append(
             {
-                "Circuito": c["circuitName"],
-                "Lat": float(c["Location"]["lat"]),
-                "Lon": float(c["Location"]["long"]),
+                "Circuito": circuito.get("circuitName"),
+                "Lat": lat,
+                "Lon": lon,
             }
-            for c in datos
-        ]
-    )
+        )
+    return pd.DataFrame(registros).dropna(subset=["Lat", "Lon"])
 
 
 @st.cache_data(ttl=86400)
@@ -773,13 +789,18 @@ with tabs[8]:
 
     # H3: Consistencia de escuderías (más y menos consistente)
     if "Posición" in df_filtrado.columns:
-        escu_consist = df_filtrado.groupby("Escudería")["Posición"].std().sort_values()
-        mejor = escu_consist.idxmin()
-        peor = escu_consist.idxmax()
-        conclusion_h3 = (
-            f"Escudería más consistente: **{mejor}** (STD posición: {escu_consist.min():.2f})\n\n"
-            f"Escudería menos consistente: **{peor}** (STD posición: {escu_consist.max():.2f})"
+        escu_consist = (
+            df_filtrado.groupby("Escudería")["Posición"].std().dropna().sort_values()
         )
+        if escu_consist.empty:
+            conclusion_h3 = "⚠️ No hay suficientes datos para evaluar la consistencia de escuderías."
+        else:
+            mejor = escu_consist.idxmin()
+            peor = escu_consist.idxmax()
+            conclusion_h3 = (
+                f"Escudería más consistente: **{mejor}** (STD posición: {escu_consist.min():.2f})\n\n"
+                f"Escudería menos consistente: **{peor}** (STD posición: {escu_consist.max():.2f})"
+            )
     else:
         conclusion_h3 = "⚠️ No hay datos de posiciones finales para evaluar H3."
     st.markdown(f"- **H3:** {conclusion_h3}")
