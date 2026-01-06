@@ -86,7 +86,19 @@ def cargar_datos_api(temporada):
         except Exception as e:
             st.error(f"Error al cargar resultados: {e}")
             break
-    return pd.DataFrame(registros)
+    columnas = [
+        "Temporada",
+        "Ronda",
+        "Fecha",
+        "Circuito",
+        "Pais",
+        "Piloto",
+        "Escudería",
+        "Posición",
+        "Puntos",
+        "Status",
+    ]
+    return pd.DataFrame(registros, columns=columnas)
 
 
 @st.cache_data(ttl=86400)
@@ -116,7 +128,8 @@ def cargar_posiciones_clasificacion(temporada):
                 )
         except Exception:
             continue
-    return pd.DataFrame(posiciones)
+    columnas = ["Temporada", "Ronda", "Piloto", "PosicionClasificacion"]
+    return pd.DataFrame(posiciones, columns=columnas)
 
 
 @st.cache_data(ttl=86400)
