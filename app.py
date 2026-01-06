@@ -86,7 +86,19 @@ def cargar_datos_api(temporada):
         except Exception as e:
             st.error(f"Error al cargar resultados: {e}")
             break
-    return pd.DataFrame(registros)
+    columnas = [
+        "Temporada",
+        "Ronda",
+        "Fecha",
+        "Circuito",
+        "Pais",
+        "Piloto",
+        "Escudería",
+        "Posición",
+        "Puntos",
+        "Status",
+    ]
+    return pd.DataFrame(registros, columns=columnas)
 
 
 @st.cache_data(ttl=86400)
@@ -116,7 +128,8 @@ def cargar_posiciones_clasificacion(temporada):
                 )
         except Exception:
             continue
-    return pd.DataFrame(posiciones)
+    columnas = ["Temporada", "Ronda", "Piloto", "PosicionClasificacion"]
+    return pd.DataFrame(posiciones, columns=columnas)
 
 
 @st.cache_data(ttl=86400)
@@ -124,16 +137,19 @@ def obtener_lat_lon_circuitos():
     url = "https://api.jolpi.ca/ergast/f1/circuits.json?limit=100"
     r = requests.get(url)
     datos = r.json()["MRData"]["CircuitTable"]["Circuits"]
-    return pd.DataFrame(
-        [
+    registros = []
+    for circuito in datos:
+        location = circuito.get("Location", {})
+        lat = pd.to_numeric(location.get("lat"), errors="coerce")
+        lon = pd.to_numeric(location.get("long"), errors="coerce")
+        registros.append(
             {
-                "Circuito": c["circuitName"],
-                "Lat": float(c["Location"]["lat"]),
-                "Lon": float(c["Location"]["long"]),
+                "Circuito": circuito.get("circuitName"),
+                "Lat": lat,
+                "Lon": lon,
             }
-            for c in datos
-        ]
-    )
+        )
+    return pd.DataFrame(registros).dropna(subset=["Lat", "Lon"])
 
 
 @st.cache_data(ttl=86400)
